@@ -21,6 +21,7 @@ model User {
   favoriteSongs     String[]   @map("favorite_songs")
   favoriteArtists   String[]   @map("favorite_artists")
   favoritePlaylists String[]   @map("favorite_playlists")
+  favoriteAlbums String[]   @map("favorite_albums")
   createdPlaylists  String[]   @map("created_playlists")
   playlists         Playlist[]
 }
