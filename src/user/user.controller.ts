@@ -12,8 +12,23 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Post('add-song')
-  addSong(@Param('id') id: string, @Body() song: string) {
-    return this.userService.addSong(song, +id)
+  @Post(':id/song')
+  addSong(@Param('id') id: string, @Body() body: { song: string }) {
+    return this.userService.addSong(+id, body.song)
+  }
+
+  @Post('playlist')
+  addPlaylist(@Param('id') id: string, @Body() playlist: string) {
+    return this.userService.addPlaylist(+id, playlist)
+  }
+
+  @Post('album')
+  addAlbum(@Param('id') id: string, @Body() album: string) {
+    return this.userService.addAlbum(+id, album)
+  }
+
+  @Post('artist')
+  addArtist(@Param('id') id: string, @Body() artist: string) {
+    return this.userService.addArtist(+id, artist)
   }
 }
