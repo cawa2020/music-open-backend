@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,23 +12,28 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Post(':id/song')
-  addSong(@Param('id') id: string, @Body() body: { song: string }) {
-    return this.userService.addSong(+id, body.song)
+  @Get('byToken/:token')
+  findOneByToken(@Param('token') token: string) {
+    return this.userService.findOneByToken(token);
+  }
+
+  @Post('song')
+  addSong(@Query('token') token: string, @Body() body: { song: string }) {
+    return this.userService.addSong(token, body.song)
   }
 
   @Post('playlist')
-  addPlaylist(@Param('id') id: string, @Body() playlist: string) {
-    return this.userService.addPlaylist(+id, playlist)
+  addPlaylist(@Query('token') token: string, @Body() playlist: string) {
+    return this.userService.addPlaylist(token, playlist)
   }
 
   @Post('album')
-  addAlbum(@Param('id') id: string, @Body() album: string) {
-    return this.userService.addAlbum(+id, album)
+  addAlbum(@Query('token') token: string, @Body() album: string) {
+    return this.userService.addAlbum(token, album)
   }
 
   @Post('artist')
-  addArtist(@Param('id') id: string, @Body() artist: string) {
-    return this.userService.addArtist(+id, artist)
+  addArtist(@Query('token') token: string, @Body() artist: string) {
+    return this.userService.addArtist(token, artist)
   }
 }

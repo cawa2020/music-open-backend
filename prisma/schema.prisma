@@ -16,21 +16,22 @@ datasource db {
 model User {
   id                Int        @id @default(autoincrement())
   email             String     @unique
-  username          String     @unique
+  username          String
   password          String
-  favoriteSongs     String[]   @map("favorite_songs")
-  favoriteArtists   String[]   @map("favorite_artists")
-  favoritePlaylists String[]   @map("favorite_playlists")
-  favoriteAlbums String[]   @map("favorite_albums")
-  createdPlaylists  String[]   @map("created_playlists")
+  favoriteSongs     Json[]   @map("favorite_songs")
+  favoriteArtists   Json[]   @map("favorite_artists")
+  favoritePlaylists Json[]   @map("favorite_playlists")
+  favoriteAlbums    Json[]   @map("favorite_albums")
+  createdPlaylists  Json[]   @map("created_playlists")
   playlists         Playlist[]
 }
 
 model Playlist {
   id           Int      @id @default(autoincrement())
-  songs        String[]
+  songs        Json[]
   creationDate String   @map("creation_date")
   title        String
   user         User     @relation(fields: [userId], references: [id])
   userId       Int
+  type         String   @default("playlist")
 }
