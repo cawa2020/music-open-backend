@@ -9,9 +9,11 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-  const config = new DocumentBuilder().build()
-  const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document)
+  const config = new DocumentBuilder().build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
 bootstrap();
+
+//!!!!!!!!!!!! param queue
