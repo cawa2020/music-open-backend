@@ -16,8 +16,8 @@ export class UserController {
   }
 
   @Post('song')
-  addSong(@Query('token') token: string, @Body() body: { song: string }) {
-    return this.userService.toggleSong(token, body.song);
+  addSong(@Query('token') token: string, @Body() song: string) {
+    return this.userService.toggleSong(token, song);
   }
 
   @Post('playlist')
