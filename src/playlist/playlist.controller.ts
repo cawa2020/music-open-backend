@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PlaylistService } from './playlist.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
@@ -15,34 +16,30 @@ import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 export class PlaylistController {
   constructor(private readonly playlistService: PlaylistService) {}
 
-  @Post(':token')
-  create(
-    @Param('token') token: string,
-    @Body() createPlaylistDto: CreatePlaylistDto,
-  ) {
-    return this.playlistService.create(createPlaylistDto, token);
-  }
-
-  @Get()
-  findAll() {
-    return this.playlistService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.playlistService.findOne(+id);
   }
 
+  @Post()
+  create(
+    @Query('token') token: string,
+    @Body() createPlaylistDto: CreatePlaylistDto,
+  ) {
+    return this.playlistService.create(createPlaylistDto, token);
+  }
+
   @Patch(':id')
   update(
+    @Query('token') token: string,
     @Param('id') id: string,
     @Body() updatePlaylistDto: UpdatePlaylistDto,
   ) {
-    return this.playlistService.update(+id, updatePlaylistDto);
+    return this.playlistService.update(token, +id, updatePlaylistDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.playlistService.remove(+id);
+  remove(@Query('token') token: string, @Param('id') id: string) {
+    return this.playlistService.remove(token, +id);
   }
 }

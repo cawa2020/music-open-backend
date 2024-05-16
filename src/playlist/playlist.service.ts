@@ -36,11 +36,11 @@ export class PlaylistService {
     return `This action returns a #${id} playlist`;
   }
 
-  update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
+  update(token: string, id: number, updatePlaylistDto: UpdatePlaylistDto) {
     return `This action updates a #${id} playlist`;
   }
 
-  remove(id: number) {
+  remove(token: string, id: number) {
     return `This action removes a #${id} playlist`;
   }
 }
