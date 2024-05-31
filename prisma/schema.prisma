@@ -23,6 +23,7 @@ model User {
   favoritePlaylists Json[]   @map("favorite_playlists")
   favoriteAlbums    Json[]   @map("favorite_albums")
   createdPlaylists  Json[]   @map("created_playlists")
+  recentlyPlayed Json[] @map("recently_played")
   playlists         Playlist[]
 }
 

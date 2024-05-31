@@ -17,7 +17,6 @@ export class PlaylistService {
       secret: jwtConstants.secret,
     });
     const userId = payload.id;
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
     const playlist: any = {
       ...createPlaylistDto,

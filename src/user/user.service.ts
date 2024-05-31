@@ -28,6 +28,25 @@ export class UserService {
     return this.prisma.user.create({ data: body });
   }
 
+  async addToRecentlyPlayed(token: string, item: any) {
+    const userId = await this.getUserId(token);
+    const recentlyPlayd = (
+      await this.prisma.user.findUnique({ where: { id: userId } })
+    ).recentlyPlayed;
+    const index = recentlyPlayd.findIndex(el => JSON.stringify(el) === item)
+    if (index === -1) {
+      recentlyPlayd.push(item)
+    } else {
+      recentlyPlayd.splice(index, 1)
+      recentlyPlayd.unshift(item)
+    }
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { recentlyPlayed: recentlyPlayd },
+    });
+  }
+
   async toggleSong(token: string, song: any) {
     const userId = await this.getUserId(token);
     const favoriteSongs = (

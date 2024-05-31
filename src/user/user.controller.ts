@@ -34,4 +34,9 @@ export class UserController {
   addArtist(@Query('token') token: string, @Body() artist: string) {
     return this.userService.toggleArtist(token, artist);
   }
+
+  @Post('recentlyPlayed')
+  addRecentlyPlayd(@Query('token') token: string, @Body() item: string) {
+    return this.userService.addToRecentlyPlayed(token, item);
+  }
 }
