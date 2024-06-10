@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -10,14 +10,18 @@ export class UserService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async findOneByToken(token: string) {
-    const payload = await this.jwtService.verifyAsync(token, {
-      secret: jwtConstants.secret,
-    });
-    const id = payload.id;
-    return this.prisma.user.findUnique({ where: { id: id } });
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: jwtConstants.secret,
+      });
+      const id = payload.id;
+      return this.prisma.user.findUnique({ where: { id: id } });
+    } catch {
+      throw new UnauthorizedException()
+    }
   }
 
   findOne(id: number) {
