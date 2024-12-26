@@ -11,10 +11,11 @@ import {
 import { PlaylistService } from './playlist.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
+import { JsonValue } from '@prisma/client/runtime/library';
 
 @Controller('playlist')
 export class PlaylistController {
-  constructor(private readonly playlistService: PlaylistService) {}
+  constructor(private readonly playlistService: PlaylistService) { }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -27,6 +28,15 @@ export class PlaylistController {
     @Body() createPlaylistDto: CreatePlaylistDto,
   ) {
     return this.playlistService.create(createPlaylistDto, token);
+  }
+
+  @Patch(':id/songs')
+  addSongs(
+    @Query('token') token: string,
+    @Param('id') id: string,
+    @Body() song: JsonValue[],
+  ) {
+    return this.playlistService.addSongs(token, +id, song);
   }
 
   @Patch(':id')

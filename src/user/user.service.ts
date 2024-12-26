@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/constants';
@@ -17,15 +16,18 @@ export class UserService {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
-      const id = payload.id;
-      return this.prisma.user.findUnique({ where: { id: id } });
+      const user = await (this.prisma.user.findUnique({ where: { id: payload.id } }))
+      const playlists = await this.prisma.playlist.findMany({ where: { userId: payload.id } })
+      return { ...user, playlists: playlists };
     } catch {
       throw new UnauthorizedException()
     }
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({ where: { id: id } });
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
+    const playlists = await this.prisma.playlist.findMany({ where: { userId: id } })
+    return { ...user, playlists: playlists };
   }
 
   create(body: CreateUserDto) {
@@ -36,7 +38,7 @@ export class UserService {
     const userId = await this.getUserId(token);
     const recentlyPlayd = (
       await this.prisma.user.findUnique({ where: { id: userId } })
-    ).recentlyPlayed;
+    ).recentlyPlayedArtists;
     const index = recentlyPlayd.findIndex(el => JSON.stringify(el) === item)
     if (index === -1) {
       recentlyPlayd.push(item)
@@ -47,7 +49,7 @@ export class UserService {
 
     return this.prisma.user.update({
       where: { id: userId },
-      data: { recentlyPlayed: recentlyPlayd },
+      data: { recentlyPlayedArtists: recentlyPlayd },
     });
   }
 

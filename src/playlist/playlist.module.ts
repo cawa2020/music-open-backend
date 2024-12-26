@@ -8,4 +8,4 @@ import { PrismaService } from 'src/prisma.service';
   controllers: [PlaylistController],
   providers: [PlaylistService, JwtService, PrismaService],
 })
-export class PlaylistModule {}
+export class PlaylistModule { }
