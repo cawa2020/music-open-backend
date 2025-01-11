@@ -31,12 +31,12 @@ export class PlaylistController {
   }
 
   @Patch(':id/songs')
-  addSongs(
+  toggleSong(
     @Query('token') token: string,
     @Param('id') id: string,
-    @Body() song: JsonValue[],
+    @Body() song: JsonValue,
   ) {
-    return this.playlistService.addSongs(token, +id, song);
+    return this.playlistService.toggleSong(token, +id, song);
   }
 
   @Patch(':id')

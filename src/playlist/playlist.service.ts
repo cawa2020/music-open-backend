@@ -4,45 +4,38 @@ import { jwtConstants } from 'src/constants';
 import { PrismaService } from 'src/prisma.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
-import { Song } from './entities/playlist.entity';
 import { JsonValue } from '@prisma/client/runtime/library';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PlaylistService {
   constructor(
     private prisma: PrismaService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) { }
 
   async create(createPlaylistDto: CreatePlaylistDto, token: string) {
     const payload = await this.jwtService.verifyAsync(token, { secret: jwtConstants.secret, });
+    const user = await this.userService.findOne(payload.id)
+    const data = {
+      title: createPlaylistDto.title,
+      songs: createPlaylistDto.songs,
+      creationDate: new Date().toISOString(),
+      userId: payload.id,
+      userName: user.username
+    }
     const playlist = await this.prisma.playlist.create({
-      data: {
-        title: createPlaylistDto.title,
-        songs: createPlaylistDto.songs,
-        creationDate: new Date().toISOString(),
-        userId: payload.id
-      },
-      include: {
-        user: true, // Включаем связанного пользователя
-      }
+      data: data,
+      include: { user: true }
     });
 
-    // Обновляем список плейлистов у пользователя
     await this.prisma.user.update({
       where: { id: payload.id },
-      data: {
-        playlists: {
-          connect: { id: playlist.id }
-        }
-      }
+      data: { playlists: { connect: { id: playlist.id } } }
     });
-    // const createdPlaylists = (await this.prisma.user.findUnique({ where: { id: userId } })).
-    // createdPlaylists.push(playlist)
-    // return this.prisma.user.update({
-    //   where: { id: userId },
-    //   data: { createdPlaylists: createdPlaylists },
-    // });
+
+    return playlist
   }
 
   findAll() {
@@ -54,11 +47,16 @@ export class PlaylistService {
     return playlist
   }
 
-  async addSongs(token: string, id: number, newSongs: JsonValue[]) {
+  async toggleSong(token: string, id: number, newSong: JsonValue) {
     const payload = await this.jwtService.verifyAsync(token, { secret: jwtConstants.secret, });
     if (!payload.id) return
     const songs = await (await (this.prisma.playlist.findUnique({ where: { id: id } }))).songs
-    songs.push(...newSongs)
+    if (songs.find(song => song === newSong)) {
+      const index = songs.findIndex(el => el === newSong)
+      songs.splice(index, 1)
+    } else {
+      songs.push(newSong)
+    }
     return this.prisma.playlist.update({ where: { id: id }, data: { songs: songs } })
   }
 
