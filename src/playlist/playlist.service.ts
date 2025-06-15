@@ -50,9 +50,9 @@ export class PlaylistService {
   async toggleSong(token: string, id: number, newSong: JsonValue) {
     const payload = await this.jwtService.verifyAsync(token, { secret: jwtConstants.secret, });
     if (!payload.id) return
-    const songs = await (await (this.prisma.playlist.findUnique({ where: { id: id } }))).songs
-    if (songs.find(song => song === newSong)) {
-      const index = songs.findIndex(el => el === newSong)
+    const songs: any = await (await (this.prisma.playlist.findUnique({ where: { id: id } }))).songs
+    if (songs.find(song => (song as any).id === (newSong as any).id)) {
+      const index = songs.findIndex(el => (el as any).id === (newSong as any).id)
       songs.splice(index, 1)
     } else {
       songs.push(newSong)
